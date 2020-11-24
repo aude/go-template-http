@@ -14,18 +14,20 @@ func usage() string {
 
 you can use my environment variables as well, through the "getenv" function
 
-GET /environ to see available env vars
+list available env vars with the "environ" function
 
 examples:
 
 	$ curl http://localhost/
-	$ curl http://localhost/environ
 	$ curl -d 'The value of $PATH is: {{getenv "PATH"}}' http://localhost/
+	$ curl -d '{{environ}}' http://localhost/
+	$ curl -d '{{range environ}}{{println .}}{{end}}' http://localhost/
 `)
 }
 
 var funcMap = template.FuncMap{
-	"getenv": os.Getenv,
+	"environ": os.Environ,
+	"getenv":  os.Getenv,
 }
 
 func main() {
@@ -53,7 +55,7 @@ func main() {
 			return
 		}
 
-		tmpl, err := template.New("random string").Funcs(funcMap).Parse(string(body))
+		tmpl, err := template.New("request").Funcs(funcMap).Parse(string(body))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintln(w, "could not parse template:", err)
@@ -65,20 +67,6 @@ func main() {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintln(w, "could not execute template:", err)
 			return
-		}
-		fmt.Fprintln(w)
-	})
-
-	http.HandleFunc("/environ", func(w http.ResponseWriter, r *http.Request) {
-		// if not GET, reply with usage instructions
-		if r.Method != "GET" {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			fmt.Fprintln(w, usage())
-			return
-		}
-
-		for _, env := range os.Environ() {
-			fmt.Fprintln(w, env)
 		}
 	})
 
