@@ -7,4 +7,5 @@ FROM scratch
 # run as non-root
 USER 65534
 CMD ["/go-template-http"]
+EXPOSE 8080
 COPY --from=builder /app/go-template-http /go-template-http
