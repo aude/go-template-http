@@ -18,10 +18,10 @@ list available env vars with the "environ" function
 
 examples:
 
-	$ curl http://localhost/
-	$ curl -d 'The value of $PATH is: {{getenv "PATH"}}' http://localhost/
-	$ curl -d '{{environ}}' http://localhost/
-	$ curl -d '{{range environ}}{{println .}}{{end}}' http://localhost/
+	$ curl http://localhost:8080/
+	$ curl -d 'The value of $PATH is: {{getenv "PATH"}}' http://localhost:8080/
+	$ curl -d '{{environ}}' http://localhost:8080/
+	$ curl -d '{{range environ}}{{println .}}{{end}}' http://localhost:8080/
 `)
 }
 
@@ -70,5 +70,5 @@ func main() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
